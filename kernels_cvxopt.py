@@ -23,8 +23,8 @@ def linear_kernel(x1, x2):
     return np.dot(x1, x2)
 
 
-def polynomial_kernel(x, y, p=3):
-    return (1 + np.dot(x, y)) ** p
+def polynomial_kernel(x, xp, p=3):
+    return (1 + np.dot(x, xp)) ** p
 
 
 def gaussian_kernel(x, y, sigma=5.0):
@@ -35,7 +35,8 @@ class SVM(object):
     def __init__(self, kernel=linear_kernel, C=None):
         self.kernel = kernel
         self.C = C
-        if self.C is not None: self.C = float(self.C)
+        if self.C is not None:
+            self.C = float(self.C)
 
     def fit(self, X, y):
         n_samples, n_features = X.shape
@@ -221,7 +222,7 @@ if __name__ == "__main__":
         pl.show()
 
 
-    def test_linear():
+    def demo_linear():
         X1, y1, X2, y2 = gen_lin_separable_data()
         X_train, y_train = split_train(X1, y1, X2, y2)
         X_test, y_test = split_test(X1, y1, X2, y2)
@@ -236,7 +237,7 @@ if __name__ == "__main__":
         plot_margin(X_train[y_train == 1], X_train[y_train == -1], clf)
 
 
-    def test_non_linear():
+    def demo_non_linear():
         X1, y1, X2, y2 = gen_non_lin_separable_data()
         X_train, y_train = split_train(X1, y1, X2, y2)
         X_test, y_test = split_test(X1, y1, X2, y2)
@@ -251,7 +252,7 @@ if __name__ == "__main__":
         plot_contour(X_train[y_train == 1], X_train[y_train == -1], clf)
 
 
-    def test_soft():
+    def demo_soft():
         X1, y1, X2, y2 = gen_lin_separable_overlap_data()
         X_train, y_train = split_train(X1, y1, X2, y2)
         X_test, y_test = split_test(X1, y1, X2, y2)
@@ -266,6 +267,6 @@ if __name__ == "__main__":
         plot_contour(X_train[y_train == 1], X_train[y_train == -1], clf)
 
 
-    # test_linear()
-    # test_non_linear()
-    test_soft()
+    #demo_linear()
+    #demo_non_linear()
+    demo_soft()
