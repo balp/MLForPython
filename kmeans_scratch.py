@@ -4,7 +4,7 @@ from matplotlib import style
 
 style.use('ggplot')
 
-colors = 10 * ["g.", "r.", "c.", "b.", "k."]
+colors = 10 * ["g", "r", "c", "b", "k"]
 
 
 class K_Means:
@@ -14,7 +14,7 @@ class K_Means:
         self._max_iter = max_iter
 
     def fit(self, data):
-        self._centroids = []
+        self._centroids = {}
 
         for i in range(self._k):
             self._centroids[i] = data[i]
@@ -32,25 +32,25 @@ class K_Means:
 
             prev_centroids = dict(self._centroids)
             for classification in self._classifications:
-                pass
-                # self._centroids[classification] \
-                #    = np.average(self._classifications[classification], axis=0)
+                self._centroids[classification] \
+                    = np.average(self._classifications[classification], axis=0)
+            optimized = True
+            for c in self._centroids:
+                original_centroid = prev_centroids[c]
+                current_centroid = self._centroids[c]
+                if np.sum((current_centroid - original_centroid)
+                                  / original_centroid * 100.0) > self._tol:
+                    optimized = False
+                    break
+            if optimized:
+                break
 
     def predict(self, data):
-        pass
-
-
-# clf = KMeans(n_clusters=4)
-# clf.fit(X)
-# centroids = clf.cluster_centers_
-# labels = clf.labels_
-
-
-# for i in range(len(X)):
-#     plt.plot(X[i][0], X[i][1], colors[labels[i]], markersize=25)
-# plt.scatter(centroids[:,0], centroids[:,1], marker="x", s=150, linewidth=5)
-#
-# plt.show()
+        distances = [np.linalg.norm(data
+                                    - self._centroids[centroid])
+                     for centroid in self._centroids]
+        classification = distances.index(min(distances))
+        return classification
 
 X = np.array([[1, 2],
               [1.5, 1.8],
@@ -58,5 +58,37 @@ X = np.array([[1, 2],
               [8, 8],
               [1, 0.6],
               [9, 11]])
-plt.scatter(X[:, 0], X[:, 1], s=150, linewidths=5, zorder=10)
+# plt.scatter(X[:, 0], X[:, 1], s=150, linewidths=5, zorder=10)
+# plt.show()
+
+clf = K_Means()
+clf.fit(X)
+centroids = clf._centroids
+# labels = clf.labels_
+
+
+for centroid in clf._centroids:
+    plt.scatter(clf._centroids[centroid][0], clf._centroids[centroid][1],
+                marker="o", color="k", s=150, linewidths=5)
+
+for classification in clf._classifications:
+    color = colors[classification]
+    print(color)
+    for featureset in clf._classifications[classification]:
+        plt.scatter(featureset[0], featureset[1], marker="x", color=color,
+                    s=150, linewidths=5)
+
+unknowns = np.array([[1, 3],
+                     [2, 8],
+                     [2, 9],
+                     [0, 3],
+                     [6, 4],
+                     [5, 3],
+                     ])
+
+for unknown in unknowns:
+    classification = clf.predict(unknown)
+    plt.scatter(unknown[0], unknown[1], marker='*',
+                color=colors[classification], s=150, linewidths=5)
+
 plt.show()
