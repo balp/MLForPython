@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.5
+# Need data from https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)
 
 import numpy as np
 import warnings
