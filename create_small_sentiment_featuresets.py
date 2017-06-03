@@ -5,6 +5,9 @@ import random
 import pickle
 from collections import Counter
 from nltk.stem import WordNetLemmatizer
+import os.path
+
+PICKLE_FILE_NAME = 'small_sentiment_set.pickle'
 
 lemmatizer = WordNetLemmatizer()
 hm_lines = 100000
@@ -60,10 +63,19 @@ def create_feature_set_and_labels(pos, neg, test_size=0.1):
     test_y = list(features[:, 1][-testing_size:])
     return train_x, train_y, test_x, test_y
 
+
+def get_pos_net_train_and_test_set():
+    if os.path.exists(PICKLE_FILE_NAME):
+        with open(PICKLE_FILE_NAME, 'rb') as f:
+            [train_x, train_y, test_x, test_y] = pickle.load(f)
+    else:
+        train_x, train_y, test_x, test_y \
+            = create_feature_set_and_labels('pos.txt',
+                                            'neg.txt')
+        with open(PICKLE_FILE_NAME, 'wb') as f:
+            pickle.dump([train_x, train_y, test_x, test_y], f)
+    return train_x, train_y, test_x, test_y
+
 if __name__ == '__main__':
     train_x, train_y, test_x, test_y \
-        = create_feature_set_and_labels('pos.txt',
-                                        'neg.txt')
-    with open('sentiment_set.pickle', 'wb') as f:
-        pickle.dump([train_x, train_y, test_x, test_y], f)
-
+        = get_pos_net_train_and_test_set()
